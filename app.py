@@ -4,7 +4,6 @@ from inference import predict_event
 
 app = FastAPI(title="Fraud Detector 🚀")
 
-# Define the input shape (30 features)
 class TransactionInput(BaseModel):
     V1: float
     V2: float
@@ -43,12 +42,8 @@ def root():
 
 @app.post("/predict")
 def predict(input_data: TransactionInput):
-    # Convert input to list
     input_list = list(input_data.dict().values())
-
-    # Get prediction
     prediction = predict_event(input_list)
-
     return {
         "prediction": prediction,
         "meaning": "Fraud" if prediction == 1 else "Not Fraud"
