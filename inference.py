@@ -1,22 +1,23 @@
-import joblib
+import zipfile
+import os
+import pickle
 import numpy as np
+import joblib
 
-# ✅ Load your scaler and trained Voting model
+# Step 1: Extract zip if not already extracted
+if not os.path.exists("voting_model.pkl"):
+    with zipfile.ZipFile("voting_model.zip", "r") as zip_ref:
+        zip_ref.extractall()
+
+# Step 2: Load your scaler and model
 scaler = joblib.load("scaler.pkl")
-model = joblib.load("voting_model.pkl")
 
+with open("voting_model.pkl", "rb") as f:
+    model = pickle.load(f)
+
+# Step 3: Define prediction function
 def predict_event(input_array):
-    """
-    input_array: should be a list or np.array of shape (n_features,)
-    Example: [V1, V2, ..., V28, Amount, Time]
-    """
-    # Reshape for a single sample
     X = np.array(input_array).reshape(1, -1)
-
-    # Scale with your saved scaler
     X_scaled = scaler.transform(X)
-
-    # Predict
     prediction = model.predict(X_scaled)
-
     return int(prediction[0])
